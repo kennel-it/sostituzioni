@@ -209,6 +209,20 @@ public class FinestraPrincipale extends Application {
 		}
 	}
 	@FXML
+	private void mostraMotiviSostituzione(Event  e) {
+		Stage s = new Stage();
+		Scene scena;
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader();
+			scena = new Scene(fxmlLoader.load(getClass().getResource("FinestraMotiviSostituzione.fxml").openStream()));
+			s.setScene(scena);
+			s.setTitle("Motivi per le sostituzioni");
+			s.show();
+		} catch (IOException x) {
+			x.printStackTrace();
+		}
+	}
+	@FXML
 	private void esportaGiornata(Event e) {
 		Stage s = new Stage();
 		Scene scena;
