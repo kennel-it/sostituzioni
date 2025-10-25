@@ -1,6 +1,7 @@
 package it.edu.iisgubbio.sostituzioni;
 
 import it.edu.iisgubbio.sostituzioni.oggetti.Sostituzione.Motivo;
+import it.edu.iisgubbio.sostituzioni.gui.FabbircaDiCaselleMotivi;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
@@ -12,6 +13,7 @@ public class FinestraMotiviSostituzione {
     
     @FXML
     void initialize() {
+    	listViewMotivi.setCellFactory(new FabbircaDiCaselleMotivi());
         for (Motivo motivo : Motivo.values()) { 
             listViewMotivi.getItems().add(motivo);
         }
