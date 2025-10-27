@@ -6,7 +6,7 @@
 	<!-- informazioni generali sul programma -->
 	<groupId>it.edu.iisgubbio</groupId>
 	<artifactId>sostituzioni</artifactId>
-	<version>4.0.0</version>
+	<version>4.1.0</version>
 	<packaging>jar</packaging>
 	<name>sostituzioni</name>
 	<url>http://www.iisgubbio.edu.it</url>
@@ -15,9 +15,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.release>24</maven.compiler.release>
 		<progetto.jars>${project.build.directory}/lib</progetto.jars>
-		<!-- https://rterp.wordpress.com/2012/03/16/stamping-version-number-and-build-time-in-properties-file-with-maven/ -->
-        <timestamp>${maven.build.timestamp}</timestamp>
-        <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
+		<!--
+		https://rterp.wordpress.com/2012/03/16/stamping-version-number-and-build-time-in-properties-file-with-maven/ -->
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
 	</properties>
 
 	<dependencies>
@@ -35,6 +36,15 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<!--  per avviare il programma con "mvn exec:java" -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<mainClass>it.edu.iisgubbio.sostituzioni.FinestraPrincipale</mainClass>
+				</configuration>
+			</plugin>
 			<!--  per controllare le verisoni di java in compilazione -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -101,19 +111,19 @@
 	            </executions>
 	        </plugin>  -->
 		</plugins>
-        <resources>
-            <resource>
-                <!-- cartella solita delle risorse -->
-                <directory>src/main/resources</directory>
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <!-- questa è una cartella in più, serve soltanto a mettere un file in cui maven
+		<resources>
+			<resource>
+				<!-- cartella solita delle risorse -->
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<!-- questa è una cartella in più, serve soltanto a mettere un file in cui maven
                 quando compila registra il numero di versione e momento di compilazione -->
-                <directory>src/main/resources-filtered</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
+				<directory>src/main/resources-filtered</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 
 	</build>
 </project>
