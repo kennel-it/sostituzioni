@@ -1,5 +1,7 @@
 package it.edu.iisgubbio.sostituzioni.oggetti;
 
+import it.edu.iisgubbio.sostituzioni.Ambiente;
+
 public class TestDocente {
 	public static void main(String[] args) {
 		Docente giammarioli;
@@ -41,9 +43,13 @@ public class TestDocente {
 		
 		giammarioli.orePotenziamento.add(new Ora(4,5));
         giammarioli.orePotenziamento.add(new Ora(4,6));
+        
+        Docente labita = Ambiente.cercaDocentePerNome("LABITA Giuseppe");
+        Ora oraTest= new Ora(3,5);
 		
 		System.out.println(giammarioli);
 		
+		System.out.println("funzione nell'ora: "+labita.funzioneNellOra(oraTest));
 		System.out.println("lavora in 4i: "+giammarioli.lavoraNellaClasse("4i"));
 		System.out.println("lavora in 4b: "+giammarioli.lavoraNellaClasse("4b"));
 		System.out.println("lavora nell'ora '"+i4Giovedi4+"': "+giammarioli.lavoraNellOra(i4Giovedi4));

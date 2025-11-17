@@ -2,6 +2,8 @@ package it.edu.iisgubbio.sostituzioni.oggetti;
 
 import java.util.ArrayList;
 
+import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione.Funzione;
+
 /************************************************************************************************
  * Rappresenta un docente con tutte le caratteristiche del suo orario
  ***********************************************************************************************/
@@ -97,6 +99,20 @@ public class Docente implements Comparable<Docente>{
 		return false;
 	}
 
+	/********************************************************************************************
+	 * 
+	 * @param ora
+	 * @return la funzione che ha quel professore nell'ora, ritorna null se non ha un ora in comune
+	 *******************************************************************************************/
+	public Funzione funzioneNellOra(Ora ora) {
+		for (int i = 0; i < oreLezione.size(); i++) {
+			if (oreLezione.get(i).giorno == ora.giorno && oreLezione.get(i).orario == ora.orario) {
+				return oreLezione.get(i).funzione;
+			}
+		}
+		return null;
+	}
+	
 	/********************************************************************************************
 	 * @param ora
 	 * @param classe

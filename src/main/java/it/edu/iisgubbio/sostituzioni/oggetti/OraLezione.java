@@ -9,13 +9,26 @@ public class OraLezione extends Ora{
 	public String classe;
 	public boolean compresenza;
 	public String materia;
+	public Funzione funzione;
+	
+	public enum Funzione{
+		standard,
+		sostegno,
+		potenziamento
+	}
 
 	public OraLezione(int giorno, int orario) {
 		super(giorno,orario);
+		this.funzione = Funzione.standard;
+	}
+	
+	public OraLezione(int giorno, int orario, Funzione disciplina) {
+		super(giorno,orario);
+		this.funzione = disciplina;
 	}
 	
 	public OraLezione(){
-		
+		this.funzione = Funzione.standard;
 	}
 	
 	/**
@@ -30,6 +43,7 @@ public class OraLezione extends Ora{
         this.aula = aula;
         this.classe = classe;
         this.compresenza = compresenza;
+		this.funzione = Funzione.standard;
     }
 	
 	@Override

@@ -28,6 +28,7 @@ import it.edu.iisgubbio.sostituzioni.gui.FabbricaDiCaselleOraLezione;
 import it.edu.iisgubbio.sostituzioni.gui.FabbricaDiCaselleSostituzione;
 import it.edu.iisgubbio.sostituzioni.oggetti.Docente;
 import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione;
+import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione.Funzione;
 import it.edu.iisgubbio.sostituzioni.oggetti.Sostituzione;
 import it.edu.iisgubbio.sostituzioni.oggetti.Sostituzione.Motivo;
 import javafx.application.Application;
@@ -473,7 +474,18 @@ public class FinestraPrincipale extends Application {
 						oraDaSostituire.orario, oraDaSostituire.aula, oraDaSostituire.classe, true, sostituto.nome,
 						testoData);
 				s.setNomeDocenteDaSostituire(nomeDocenteDaSostituire);
-				s.setMotivazione(Motivo.copresenza);
+				Funzione funzioneDocente=sostituto.funzioneNellOra(oraDaSostituire);
+				switch(funzioneDocente) {
+				case OraLezione.Funzione.standard:
+					s.setMotivazione(Motivo.copresenza);
+					break;
+				case OraLezione.Funzione.sostegno:
+					s.setMotivazione(Motivo.copresenza_sostegno);
+					break;
+				case OraLezione.Funzione.potenziamento:
+					s.setMotivazione(Motivo.copresenza_potenziamento);
+					break;
+				}
 				candidati.add(s);
 				tuttiIDocenti.remove(sostituto);
 			}

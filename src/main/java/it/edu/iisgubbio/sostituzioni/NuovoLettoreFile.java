@@ -15,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import it.edu.iisgubbio.sostituzioni.oggetti.Docente;
 import it.edu.iisgubbio.sostituzioni.oggetti.Ora;
 import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione;
+import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione.Funzione;
 
 /**
  * Legge il documento excel e inserisce le informazioni in un arraylist docenti
@@ -199,7 +200,6 @@ public class NuovoLettoreFile {
     						
     					default:
     						d.oreLezione.add(new OraLezione(giorno, orario, aula, classe, compresenza));
-    						
     					}
     				}
     			}
@@ -327,7 +327,7 @@ public class NuovoLettoreFile {
                         d.oreAPagamento.add(new Ora(giorno, orario));
                         break;
 					default:
-						OraLezione ora = new OraLezione(giorno, orario);
+						OraLezione ora = new OraLezione(giorno, orario, Funzione.sostegno);
 						ora.classe = classe;
 						d.oreLezione.add(ora);
 					}
