@@ -10,25 +10,41 @@ public class OraLezione extends Ora{
 	public boolean compresenza;
 	public String materia;
 	public Funzione funzione;
+	public LivelloSostegno livelloSostegno;
 	
 	public enum Funzione{
 		standard,
 		sostegno,
 		potenziamento
 	}
+	
+	public enum LivelloSostegno{
+		base, //nero
+		differenziato, //rosso
+		potenziamento //blu
+	}
 
 	public OraLezione(int giorno, int orario) {
 		super(giorno,orario);
 		this.funzione = Funzione.standard;
+		this.livelloSostegno=null;
 	}
 	
 	public OraLezione(int giorno, int orario, Funzione disciplina) {
 		super(giorno,orario);
 		this.funzione = disciplina;
+		this.livelloSostegno=null;
+	}
+
+	public OraLezione(int giorno, int orario, Funzione disciplina, LivelloSostegno livelloSostengo) {
+		super(giorno,orario);
+		this.funzione = disciplina;
+		this.livelloSostegno=livelloSostengo;
 	}
 	
 	public OraLezione(){
 		this.funzione = Funzione.standard;
+		this.livelloSostegno=null;
 	}
 	
 	/**

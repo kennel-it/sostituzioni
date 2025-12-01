@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import it.edu.iisgubbio.sostituzioni.oggetti.Docente;
@@ -75,6 +79,7 @@ public class NuovoLettoreFile {
 	                trovato.oreLezione.add(ol);
 	            }
 	        }
+	        
 	    }
 	    leggiGruppi(percorso, curricolari);
 	    Collections.sort(curricolari);
@@ -327,6 +332,24 @@ public class NuovoLettoreFile {
                         d.oreAPagamento.add(new Ora(giorno, orario));
                         break;
 					default:
+						Cell cella=foglio.getRow(i).getCell(j);
+						CellType tipo=cella.getCellType();
+						switch (tipo) {
+							case CellType.NUMERIC:
+								break;
+							case CellType.STRING:
+								CellStyle stile=cella.getCellStyle();
+								Font font=libro.getFontAt(stile.getFontIndex());
+								if(font instanceof XSSFFont xssfFont) {
+									byte[] rgb = xssfFont.getXSSFColor().getRGB();
+									//il tipo byte è signed quindi dobbiamo fare l'AND con 0xFF(255 in int)
+									//per riportarlo al valore corrispondente
+									System.out.println("è una stringa con colore: RGB("+(rgb[0]&0xFF)+","+(rgb[1]&0xFF)+","+(rgb[2]&0xFF)+")");
+								}
+								break;
+							case CellType.BLANK:
+								break;		
+						}
 						OraLezione ora = new OraLezione(giorno, orario, Funzione.sostegno);
 						ora.classe = classe;
 						d.oreLezione.add(ora);
