@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -20,6 +21,8 @@ import it.edu.iisgubbio.sostituzioni.oggetti.Docente;
 import it.edu.iisgubbio.sostituzioni.oggetti.Ora;
 import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione;
 import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione.Funzione;
+import it.edu.iisgubbio.sostituzioni.oggetti.OraLezione.LivelloSostegno;
+import javafx.scene.paint.Color;
 
 /**
  * Legge il documento excel e inserisce le informazioni in un arraylist docenti
@@ -79,7 +82,9 @@ public class NuovoLettoreFile {
 	                trovato.oreLezione.add(ol);
 	            }
 	        }
-	        
+	        for(OraLezione ol: candidato.oreLezione) {
+                System.out.println(ol.livelloSostegno);
+            }
 	    }
 	    leggiGruppi(percorso, curricolari);
 	    Collections.sort(curricolari);
@@ -292,74 +297,105 @@ public class NuovoLettoreFile {
 	 * @throws FileNotFoundException 
 	 */
 	public static ArrayList<Docente> leggiProfSostegno(File percorso) throws FileNotFoundException, IOException {
-		Workbook libro;
-		ArrayList<Docente> listaDocenti = new ArrayList<Docente>();
-		
-		libro = new XSSFWorkbook(new FileInputStream(percorso));
-		Sheet foglio = libro.getSheet(FOGLIO_SOSTEGNO);
-		int i = PRIMO_INSEGNANTE;
-		String contenuto;
-		String classe,annotazione;
-		// scorro fino a quando arriva alla fine degli insegnanti
-		while((contenuto = leggiCella(foglio, i, COLONNA_INSEGNANTE)).length() != 0) {
-			contenuto = leggiCella(foglio, i, COLONNA_INSEGNANTE);
-			Docente d = new Docente(contenuto);
-			d.gruppo = "sostegno";
-			// scorre le ore dell'orario(colonne)
-			for (int j = 1; j < COLONNA_FINALE_ORARIO; j++) {
-			    // per uniformare tolgo gli spazi e metto in minuscolo il nome della classe
-			    classe = foglio.getRow(i).getCell(j)!=null 
-			            ? uniformaNomeClasse( leggiCella(foglio, i, j))
-			            : "";
-			    annotazione = foglio.getRow(i+1).getCell(j)!=null
-			            ? leggiCella(foglio, i+1, j) // replaceAll(" ", "")
-			            : "";
-			    // controlla se a quell'ora il professore lavora
-				if (classe.length() != 0 || annotazione.length() != 0) {
-					int giorno = giorno(j);
-					int orario = ora(j);
-					switch (annotazione) {
-					case MARCATORE_ORA_RECUPERO:
-						d.oraARecupero = new Ora(giorno, orario);
-						break;
-                    case MARCATORE_ORA_DISPOSIZIONE_GATTAPONE:
-                        d.oreADisposizioneGattapone.add(new Ora(giorno, orario));
-                        break;
-                    case MARCATORE_ORA_DISPOSIZIONE_CASSATA:
-                        d.oreADisposizioneCassata.add(new Ora(giorno, orario));
-                        break;
-                    case MARCATORE_ORA_PAGAMENTO:
-                        d.oreAPagamento.add(new Ora(giorno, orario));
-                        break;
-					default:
-						Cell cella=foglio.getRow(i).getCell(j);
-						CellType tipo=cella.getCellType();
-						switch (tipo) {
-							case CellType.NUMERIC:
-								break;
-							case CellType.STRING:
-								CellStyle stile=cella.getCellStyle();
-								Font font=libro.getFontAt(stile.getFontIndex());
-								if(font instanceof XSSFFont xssfFont) {
-									byte[] rgb = xssfFont.getXSSFColor().getRGB();
-									//il tipo byte è signed quindi dobbiamo fare l'AND con 0xFF(255 in int)
-									//per riportarlo al valore corrispondente
-									System.out.println("è una stringa con colore: RGB("+(rgb[0]&0xFF)+","+(rgb[1]&0xFF)+","+(rgb[2]&0xFF)+")");
-								}
-								break;
-							case CellType.BLANK:
-								break;		
+		try(Workbook libro = new XSSFWorkbook(new FileInputStream(percorso));){
+			ArrayList<Docente> listaDocenti = new ArrayList<Docente>();
+			Sheet foglio = libro.getSheet(FOGLIO_SOSTEGNO);
+			int i = PRIMO_INSEGNANTE;
+			String contenuto;
+			String classe,annotazione;
+			// scorro fino a quando arriva alla fine degli insegnanti
+			while((contenuto = leggiCella(foglio, i, COLONNA_INSEGNANTE)).length() != 0) {
+				contenuto = leggiCella(foglio, i, COLONNA_INSEGNANTE);
+				Docente d = new Docente(contenuto);
+				d.gruppo = "sostegno";
+				// scorre le ore dell'orario(colonne)
+				for (int j = 1; j < COLONNA_FINALE_ORARIO; j++) {
+				    // per uniformare tolgo gli spazi e metto in minuscolo il nome della classe
+				    classe = foglio.getRow(i).getCell(j)!=null 
+				            ? uniformaNomeClasse( leggiCella(foglio, i, j))
+				            : "";
+				    annotazione = foglio.getRow(i+1).getCell(j)!=null
+				            ? leggiCella(foglio, i+1, j) // replaceAll(" ", "")
+				            : "";
+				    // controlla se a quell'ora il professore lavora
+					if (classe.length() != 0 || annotazione.length() != 0) {
+						int giorno = giorno(j);
+						int orario = ora(j);
+						switch (annotazione) {
+						case MARCATORE_ORA_RECUPERO:
+							d.oraARecupero = new Ora(giorno, orario);
+							break;
+		                case MARCATORE_ORA_DISPOSIZIONE_GATTAPONE:
+		                    d.oreADisposizioneGattapone.add(new Ora(giorno, orario));
+		                    break;
+		                case MARCATORE_ORA_DISPOSIZIONE_CASSATA:
+		                    d.oreADisposizioneCassata.add(new Ora(giorno, orario));
+		                    break;
+		                case MARCATORE_ORA_PAGAMENTO:
+		                    d.oreAPagamento.add(new Ora(giorno, orario));
+		                    break;
+						default:
+							byte[] rgb= {0,0,0}; //colore del font
+							Cell cella=foglio.getRow(i).getCell(j);
+							//verifichiamo il tipo della cella per evitare controlli superflui
+							CellType tipo=cella.getCellType();
+							switch (tipo) {
+								case CellType.NUMERIC:
+									break;
+								case CellType.STRING:
+									CellStyle stile=cella.getCellStyle();
+									//salvo il font con il rispettivo stile
+									Font font=libro.getFontAt(stile.getFontIndex());
+									if(font instanceof XSSFFont xssfFont) {
+										//prelevo il codice colore del font
+										rgb = xssfFont.getXSSFColor().getRGB();
+									}
+									break;
+								case CellType.BLANK:
+									break;
+								default:
+									break;		
+							}
+							if(checkLivelloSostegno(rgb)==null) {
+								System.out.println("riga: "+i+" colonna: "+j);
+							}
+							OraLezione ora = new OraLezione(giorno, orario, Funzione.sostegno, checkLivelloSostegno(rgb));
+							ora.classe = classe;
+							d.oreLezione.add(ora);
 						}
-						OraLezione ora = new OraLezione(giorno, orario, Funzione.sostegno);
-						ora.classe = classe;
-						d.oreLezione.add(ora);
 					}
 				}
+				i += 2;
+				listaDocenti.add(d);
 			}
-			i += 2;
-			listaDocenti.add(d);
+			return listaDocenti;
 		}
-		return(listaDocenti);
 	}
-
+	/**
+	 * dal colore in ingresso restituisce il livello del sostegno
+	 * @param rgb il colore in un vettore di byte
+	 * @return il livello di sostegno
+	 */
+	public static LivelloSostegno checkLivelloSostegno(byte[] rgb) {
+		//Color colore = null;
+		int[] coloreInt = new int[3];
+		for(int i=0; i<3; i++) {
+			coloreInt[i]=rgb[i]&0xFF;
+		}
+		if(coloreInt[0]>230) { 
+			if(coloreInt[1]<70&&coloreInt[2]<70) {
+				//colore=Color.RED;
+				return LivelloSostegno.differenziato;
+			}
+		} else if(coloreInt[2]>230) {
+			if(coloreInt[0]<70&&coloreInt[1]<70) {
+				//colore=Color.BLUE;
+				return LivelloSostegno.potenziamento;
+			}
+		} else if(coloreInt[0]<70&&coloreInt[2]<70&&coloreInt[1]<70){
+			//colore=Color.BLACK;
+			return LivelloSostegno.base;
+		}
+		return null;
+	}
 }
